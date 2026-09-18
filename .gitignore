@@ -1,0 +1,26 @@
+# Dossier des consignes du professeur (non destiné à être publié)
+/Consignes/
+
+# Dépendances
+node_modules/
+
+# Builds
+dist/
+.angular/
+/backend/dist/
+*.tsbuildinfo
+
+# Env
+.env
+.env.*
+
+# OS / éditeurs
+.DS_Store
+Thumbs.db
+.vscode/*
+!.vscode/settings.json
+!.vscode/tasks.json
+!.vscode/launch.json
+!.vscode/extensions.json
+.idea/
+.~lock.*#
