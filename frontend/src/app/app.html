@@ -1,3 +1,20 @@
+@if (gameService.worldQuery.loading() && !world()) {
+  <div class="loading-overlay">
+    <mat-spinner diameter="48" />
+    <p>Connexion au monde…</p>
+  </div>
+}
+
+@if (gameService.worldQuery.error(); as error) {
+  <div class="error-banner">
+    <span>
+      Impossible de contacter le serveur ({{ gameService.server() }}) : {{ error.message }}. Vérifiez que le
+      backend tourne bien (<code>npm run start:dev</code> dans <code>backend/</code>).
+    </span>
+    <button type="button" mat-raised-button color="warn" (click)="gameService.refreshWorld()">Réessayer</button>
+  </div>
+}
+
 <div class="header">
   <div class="header-world">
     @if (world(); as w) {

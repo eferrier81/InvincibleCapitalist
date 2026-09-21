@@ -3,6 +3,7 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatBadgeModule } from '@angular/material/badge';
 import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
+import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { FormField } from '@angular/forms/signals';
 import { GameService } from './game';
 import { Produit, QtMulti } from './produit/produit';
@@ -10,7 +11,16 @@ import { BigvaluePipe } from './bigvalue-pipe';
 import { PalierFieldsFragment } from './graphql';
 
 @Component({
-  imports: [Produit, BigvaluePipe, MatButtonModule, MatIconModule, MatBadgeModule, MatSnackBarModule, FormField],
+  imports: [
+    Produit,
+    BigvaluePipe,
+    MatButtonModule,
+    MatIconModule,
+    MatBadgeModule,
+    MatSnackBarModule,
+    MatProgressSpinnerModule,
+    FormField,
+  ],
   selector: 'app-root',
   styleUrl: './app.css',
   templateUrl: './app.html',
