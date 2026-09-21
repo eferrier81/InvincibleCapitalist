@@ -32,4 +32,8 @@ describe('GameService', () => {
     expect(costForN).toBeLessThanOrEqual(500);
     expect(costForNPlus1).toBeGreaterThan(500);
   });
+
+  it('logoUrl inserts a slash between the server URL and the logo path', () => {
+    expect(service.logoUrl('icones/atomeve.jpg')).toBe('http://localhost:3000/icones/atomeve.jpg');
+  });
 });

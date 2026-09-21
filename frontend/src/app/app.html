@@ -18,7 +18,7 @@
 <div class="header">
   <div class="header-world">
     @if (world(); as w) {
-      <img class="round small" [src]="gameService.server() + w.logo" [alt]="w.name" />
+      <img class="round small" [src]="gameService.logoUrl(w.logo)" [alt]="w.name" />
       <span class="world-name">{{ w.name }}</span>
     }
   </div>
@@ -109,7 +109,7 @@
       @for (manager of world()?.managers; track manager.name) {
         @if (!manager.unlocked) {
           <div class="listitem">
-            <img class="round small" [src]="gameService.server() + manager.logo" [alt]="manager.name" />
+            <img class="round small" [src]="gameService.logoUrl(manager.logo)" [alt]="manager.name" />
             <div class="listitem-info">
               <div class="listitem-name">{{ manager.name }}</div>
               <div class="listitem-detail">Automatise : {{ targetProductName(manager.idcible) }}</div>
@@ -140,7 +140,7 @@
     <div class="modal-list">
       @for (item of nextProductUnlocks(); track item.productName + item.palier.name) {
         <div class="listitem">
-          <img class="round small" [src]="gameService.server() + item.palier.logo" [alt]="item.palier.name" />
+          <img class="round small" [src]="gameService.logoUrl(item.palier.logo)" [alt]="item.palier.name" />
           <div class="listitem-info">
             <div class="listitem-name">{{ item.palier.name }}</div>
             <div class="listitem-detail">
@@ -154,7 +154,7 @@
       @for (palier of world()?.allunlocks; track palier.name) {
         @if (!palier.unlocked) {
           <div class="listitem">
-            <img class="round small" [src]="gameService.server() + palier.logo" [alt]="palier.name" />
+            <img class="round small" [src]="gameService.logoUrl(palier.logo)" [alt]="palier.name" />
             <div class="listitem-info">
               <div class="listitem-name">{{ palier.name }}</div>
               <div class="listitem-detail">
@@ -178,7 +178,7 @@
       @for (upgrade of world()?.upgrades; track upgrade.name) {
         @if (!upgrade.unlocked) {
           <div class="listitem">
-            <img class="round small" [src]="gameService.server() + upgrade.logo" [alt]="upgrade.name" />
+            <img class="round small" [src]="gameService.logoUrl(upgrade.logo)" [alt]="upgrade.name" />
             <div class="listitem-info">
               <div class="listitem-name">{{ upgrade.name }}</div>
               <div class="listitem-detail">{{ upgrade.typeratio }} x{{ upgrade.ratio }}</div>
@@ -232,7 +232,7 @@
       @for (upgrade of world()?.angelupgrades; track upgrade.name) {
         @if (!upgrade.unlocked) {
           <div class="listitem">
-            <img class="round small" [src]="gameService.server() + upgrade.logo" [alt]="upgrade.name" />
+            <img class="round small" [src]="gameService.logoUrl(upgrade.logo)" [alt]="upgrade.name" />
             <div class="listitem-info">
               <div class="listitem-name">{{ upgrade.name }}</div>
               <div class="listitem-detail">{{ upgrade.typeratio }} x{{ upgrade.ratio }}</div>

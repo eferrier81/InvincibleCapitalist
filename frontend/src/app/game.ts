@@ -45,6 +45,16 @@ export class GameService {
   readonly user = signal(initialUsername());
   readonly server = signal('http://localhost:3000');
 
+  /**
+   * Construit l'URL absolue d'une image servie par le backend
+   * (ex: "icones/gda.jpg" -> "http://localhost:3000/icones/gda.jpg").
+   * Les chemins stockés côté serveur n'ont pas de "/" en tête, il faut
+   * donc l'ajouter explicitement entre `server()` et le chemin.
+   */
+  logoUrl(logo: string): string {
+    return `${this.server()}/${logo}`;
+  }
+
   readonly worldQuery = this.apollo.signal.query({
     query: GET_WORLD_QUERY,
     variables: () => ({ user: this.user() }),

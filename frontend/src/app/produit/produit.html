@@ -1,7 +1,7 @@
 @if (prod(); as p) {
   <div class="produit">
     <div class="produit-image" (click)="startFabrication()">
-      <img class="round" [src]="gameService.server() + p.logo" [alt]="p.name" />
+      <img class="round" [src]="gameService.logoUrl(p.logo)" [alt]="p.name" />
       <span class="quantite-badge">{{ p.quantite }}</span>
     </div>
 
