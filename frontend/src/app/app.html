@@ -1,27 +1,247 @@
-<mat-toolbar color="primary">
-  <span>{{ title() }}</span>
-</mat-toolbar>
+<div class="header">
+  <div class="header-world">
+    @if (world(); as w) {
+      <img class="round small" [src]="gameService.server() + w.logo" [alt]="w.name" />
+      <span class="world-name">{{ w.name }}</span>
+    }
+  </div>
 
-<main class="page">
-  @if (worldQuery.loading()) {
-    <mat-spinner diameter="40" />
-  }
+  <div class="header-money" [innerHTML]="(world()?.money ?? 0 | bigvalue) + ' $'"></div>
 
-  @if (worldQuery.error(); as error) {
-    <mat-card appearance="outlined" class="status-card status-error">
-      <mat-card-content>Erreur de connexion au backend : {{ error.message }}</mat-card-content>
-    </mat-card>
-  }
+  <button type="button" class="qtmulti-button" (click)="cycleQtMulti()">
+    {{ qtmulti() }}
+  </button>
 
-  @if (worldQuery.data()?.getWorld; as world) {
-    <mat-card appearance="outlined" class="status-card">
-      <mat-card-header>
-        <mat-card-title>{{ world.name }}</mat-card-title>
-      </mat-card-header>
-      <mat-card-content>
-        <p>Argent : {{ world.money }}</p>
-        <p>Produits chargés : {{ world.products.length }}</p>
-      </mat-card-content>
-    </mat-card>
-  }
-</main>
+  <div class="header-user">
+    <input
+      type="text"
+      class="username-input"
+      placeholder="Pseudo"
+      [formField]="gameService.loginForm.name"
+      (keydown.enter)="gameService.commitName()"
+    />
+    <button
+      type="button"
+      mat-icon-button
+      aria-label="Rafraîchir"
+      (click)="gameService.refreshWorld()"
+    >
+      <mat-icon>refresh</mat-icon>
+    </button>
+  </div>
+</div>
+
+<div class="main">
+  <nav class="sidebar">
+    <button
+      type="button"
+      mat-raised-button
+      color="primary"
+      class="actionb"
+      [matBadge]="gameService.badgeManagers()"
+      [matBadgeHidden]="gameService.badgeManagers() === 0"
+      (click)="showManagers.update((v) => !v)"
+    >
+      Managers
+    </button>
+
+    <button type="button" mat-raised-button color="primary" class="actionb" (click)="showUnlocks.update((v) => !v)">
+      Unlocks
+    </button>
+
+    <button
+      type="button"
+      mat-raised-button
+      color="primary"
+      class="actionb"
+      [matBadge]="gameService.badgeUpgrades()"
+      [matBadgeHidden]="gameService.badgeUpgrades() === 0"
+      (click)="showUpgrades.update((v) => !v)"
+    >
+      Cash Upgrades
+    </button>
+
+    <button type="button" mat-raised-button color="accent" class="actionb" (click)="showAngels.update((v) => !v)">
+      Investors
+    </button>
+
+    <button
+      type="button"
+      mat-raised-button
+      color="accent"
+      class="actionb"
+      [matBadge]="gameService.badgeAngelUpgrades()"
+      [matBadgeHidden]="gameService.badgeAngelUpgrades() === 0"
+      (click)="showAngelUpgrades.update((v) => !v)"
+    >
+      Angel Upgrades
+    </button>
+  </nav>
+
+  <div class="products">
+    @for (j of [0, 1, 2, 3, 4, 5]; track j) {
+      <app-produit [prod]="world()?.products?.[j]" [qtmulti]="qtmulti()" class="product" />
+    }
+  </div>
+</div>
+
+@if (showManagers()) {
+  <div class="modal">
+    <h2>Managers</h2>
+    <div class="modal-list">
+      @for (manager of world()?.managers; track manager.name) {
+        @if (!manager.unlocked) {
+          <div class="listitem">
+            <img class="round small" [src]="gameService.server() + manager.logo" [alt]="manager.name" />
+            <div class="listitem-info">
+              <div class="listitem-name">{{ manager.name }}</div>
+              <div class="listitem-detail">Automatise : {{ targetProductName(manager.idcible) }}</div>
+            </div>
+            <div class="listitem-cost" [innerHTML]="manager.seuil | bigvalue"></div>
+            <button
+              type="button"
+              class="action-button"
+              [class.selectable]="(world()?.money ?? 0) >= manager.seuil"
+              [disabled]="(world()?.money ?? 0) < manager.seuil"
+              (click)="gameService.hireManager(manager)"
+            >
+              Hire !
+            </button>
+          </div>
+        }
+      }
+    </div>
+    <button type="button" mat-raised-button color="primary" class="closebutton" (click)="showManagers.set(false)">
+      Fermer
+    </button>
+  </div>
+}
+
+@if (showUnlocks()) {
+  <div class="modal">
+    <h2>Prochains paliers</h2>
+    <div class="modal-list">
+      @for (item of nextProductUnlocks(); track item.productName + item.palier.name) {
+        <div class="listitem">
+          <img class="round small" [src]="gameService.server() + item.palier.logo" [alt]="item.palier.name" />
+          <div class="listitem-info">
+            <div class="listitem-name">{{ item.palier.name }}</div>
+            <div class="listitem-detail">
+              {{ item.productName }} — {{ item.palier.seuil }} unités ({{ item.palier.typeratio }} x{{
+                item.palier.ratio
+              }})
+            </div>
+          </div>
+        </div>
+      }
+      @for (palier of world()?.allunlocks; track palier.name) {
+        @if (!palier.unlocked) {
+          <div class="listitem">
+            <img class="round small" [src]="gameService.server() + palier.logo" [alt]="palier.name" />
+            <div class="listitem-info">
+              <div class="listitem-name">{{ palier.name }}</div>
+              <div class="listitem-detail">
+                Tous les produits — {{ palier.seuil }} unités ({{ palier.typeratio }} x{{ palier.ratio }})
+              </div>
+            </div>
+          </div>
+        }
+      }
+    </div>
+    <button type="button" mat-raised-button color="primary" class="closebutton" (click)="showUnlocks.set(false)">
+      Fermer
+    </button>
+  </div>
+}
+
+@if (showUpgrades()) {
+  <div class="modal">
+    <h2>Cash Upgrades</h2>
+    <div class="modal-list">
+      @for (upgrade of world()?.upgrades; track upgrade.name) {
+        @if (!upgrade.unlocked) {
+          <div class="listitem">
+            <img class="round small" [src]="gameService.server() + upgrade.logo" [alt]="upgrade.name" />
+            <div class="listitem-info">
+              <div class="listitem-name">{{ upgrade.name }}</div>
+              <div class="listitem-detail">{{ upgrade.typeratio }} x{{ upgrade.ratio }}</div>
+            </div>
+            <div class="listitem-cost" [innerHTML]="upgrade.seuil | bigvalue"></div>
+            <button
+              type="button"
+              class="action-button"
+              [class.selectable]="(world()?.money ?? 0) >= upgrade.seuil"
+              [disabled]="(world()?.money ?? 0) < upgrade.seuil"
+              (click)="gameService.buyCashUpgrade(upgrade)"
+            >
+              Acheter
+            </button>
+          </div>
+        }
+      }
+    </div>
+    <button type="button" mat-raised-button color="primary" class="closebutton" (click)="showUpgrades.set(false)">
+      Fermer
+    </button>
+  </div>
+}
+
+@if (showAngels()) {
+  <div class="modal">
+    <h2>Investisseurs</h2>
+    <p>Émissaires actifs : <strong>{{ world()?.activeangels ?? 0 }}</strong></p>
+    <p>Bonus de production actuel : {{ world()?.angelbonus ?? 0 }}% par émissaire</p>
+    <p>Émissaires supplémentaires si reset maintenant : <strong>{{ gameService.angesGagnes() }}</strong></p>
+    <button
+      type="button"
+      mat-raised-button
+      color="accent"
+      class="reset-button"
+      [disabled]="gameService.angesGagnes() <= 0"
+      (click)="resetWorld()"
+    >
+      Remettre la partie à zéro et récupérer les émissaires
+    </button>
+    <button type="button" mat-raised-button color="primary" class="closebutton" (click)="showAngels.set(false)">
+      Fermer
+    </button>
+  </div>
+}
+
+@if (showAngelUpgrades()) {
+  <div class="modal">
+    <h2>Angel Upgrades</h2>
+    <div class="modal-list">
+      @for (upgrade of world()?.angelupgrades; track upgrade.name) {
+        @if (!upgrade.unlocked) {
+          <div class="listitem">
+            <img class="round small" [src]="gameService.server() + upgrade.logo" [alt]="upgrade.name" />
+            <div class="listitem-info">
+              <div class="listitem-name">{{ upgrade.name }}</div>
+              <div class="listitem-detail">{{ upgrade.typeratio }} x{{ upgrade.ratio }}</div>
+            </div>
+            <div class="listitem-cost">{{ upgrade.seuil }} anges</div>
+            <button
+              type="button"
+              class="action-button"
+              [class.selectable]="(world()?.activeangels ?? 0) >= upgrade.seuil"
+              [disabled]="(world()?.activeangels ?? 0) < upgrade.seuil"
+              (click)="gameService.buyAngelUpgrade(upgrade)"
+            >
+              Acheter
+            </button>
+          </div>
+        }
+      }
+    </div>
+    <button
+      type="button"
+      mat-raised-button
+      color="primary"
+      class="closebutton"
+      (click)="showAngelUpgrades.set(false)"
+    >
+      Fermer
+    </button>
+  </div>
+}

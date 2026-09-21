@@ -1,0 +1,104 @@
+.produit {
+  display: grid;
+  grid-template-columns: 100px 1fr;
+  gap: 0.75rem;
+  align-items: center;
+  padding: 0.6rem;
+  border-radius: 8px;
+  background: rgba(0, 0, 0, 0.03);
+}
+
+.produit-image {
+  position: relative;
+  cursor: pointer;
+  width: 100px;
+  height: 100px;
+}
+
+.round {
+  width: 100px;
+  height: 100px;
+  border-radius: 50%;
+  object-fit: cover;
+  display: block;
+}
+
+.quantite-badge {
+  position: absolute;
+  bottom: -4px;
+  right: -4px;
+  background: #4caf50;
+  color: white;
+  border-radius: 999px;
+  padding: 2px 8px;
+  font-size: 0.75rem;
+  font-weight: bold;
+}
+
+.produit-info {
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+  min-width: 0;
+}
+
+.produit-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  font-weight: 600;
+  gap: 0.5rem;
+}
+
+.produit-name {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.produit-revenu {
+  color: #4caf50;
+  font-size: 0.85rem;
+  white-space: nowrap;
+}
+
+.progressbar {
+  position: relative;
+  height: 24px;
+  width: 100%;
+  background: #ddd;
+  border-radius: 4px;
+  overflow: hidden;
+}
+
+.fill {
+  height: 100%;
+  background-color: #4caf50;
+  width: 0%;
+}
+
+.progress-label {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.7rem;
+  color: #222;
+}
+
+.buy-button {
+  border: none;
+  border-radius: 4px;
+  padding: 0.4rem 0.6rem;
+  background: #3f51b5;
+  color: white;
+  cursor: pointer;
+  font-size: 0.8rem;
+}
+
+.buy-button.disabled,
+.buy-button:disabled {
+  background: #aaa;
+  cursor: not-allowed;
+}

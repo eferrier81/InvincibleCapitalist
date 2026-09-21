@@ -1,0 +1,33 @@
+@if (prod(); as p) {
+  <div class="produit">
+    <div class="produit-image" (click)="startFabrication()">
+      <img class="round" [src]="gameService.server() + p.logo" [alt]="p.name" />
+      <span class="quantite-badge">{{ p.quantite }}</span>
+    </div>
+
+    <div class="produit-info">
+      <div class="produit-header">
+        <span class="produit-name">{{ p.name }}</span>
+        <span class="produit-revenu" [innerHTML]="'+' + (p.revenu * p.quantite | bigvalue)"></span>
+      </div>
+
+      <div class="progressbar">
+        <div class="fill" [style.width.%]="progress()"></div>
+        @if (timeleft() > 0) {
+          <span class="progress-label">{{ timeleft() | second }}</span>
+        }
+      </div>
+
+      <button
+        type="button"
+        class="buy-button"
+        [class.disabled]="!canBuy()"
+        [disabled]="!canBuy()"
+        (click)="buyProduct()"
+      >
+        Acheter {{ numberToBuy() }}
+        <span [innerHTML]="'(' + (buyCost() | bigvalue) + ' $)'"></span>
+      </button>
+    </div>
+  </div>
+}
