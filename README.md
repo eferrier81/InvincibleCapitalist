@@ -6,8 +6,8 @@ Projet réalisé dans le cadre du module *Architectures orientées service* (ISI
 
 ## Auteurs
 
-- Enzo
-- Ethan Cabanes
+- Enzo FERRIER
+- Ethan CABANES
 
 ## Structure du projet
 
