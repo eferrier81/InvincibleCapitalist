@@ -186,12 +186,15 @@ export class AppService {
 
   /**
    * Nombre d'Émissaires de la Coalition gagnés à la remise à zéro, calculé
-   * à partir du score cumulé de la partie en cours. Formule de première
-   * passe (courbe en racine carrée, comme dans AdVentureCapitalist),
-   * à ajuster lors de l'équilibrage.
+   * à partir des gains cumulés (world.score) selon la formule officielle
+   * des consignes :
+   *   nombre d'anges = 150 * sqrt(gains cumulés / 10^15) - totalangels
+   * (le résultat représente les émissaires *supplémentaires* gagnés par
+   * la partie en cours, totalangels étant déjà déduit).
    */
   calculerAngesGagnes(world: World): number {
-    return Math.floor(Math.sqrt(world.score / 1_000_000));
+    const total = 150 * Math.sqrt(world.score / 1e15);
+    return Math.max(0, Math.floor(total - world.totalangels));
   }
 
   /** Reconstruit un monde neuf en conservant le score et les émissaires. */
