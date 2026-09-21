@@ -71,7 +71,7 @@ export class AppService {
    */
   private updateWorld(world: World): void {
     const now = Date.now();
-    const elapsed = world.lastupdate ? now - world.lastupdate : 0;
+    const elapsed = world.lastupdate ? now - new Date(world.lastupdate).getTime() : 0;
 
     if (elapsed > 0) {
       for (const product of world.products) {
@@ -110,7 +110,7 @@ export class AppService {
       }
     }
 
-    world.lastupdate = now;
+    world.lastupdate = new Date(now).toISOString();
   }
 
   // ---------------------------------------------------------------------
@@ -203,7 +203,7 @@ export class AppService {
     nouveauMonde.score = world.score;
     nouveauMonde.totalangels = world.totalangels + angesGagnes;
     nouveauMonde.activeangels = world.activeangels + angesGagnes;
-    nouveauMonde.lastupdate = Date.now();
+    nouveauMonde.lastupdate = new Date().toISOString();
     return nouveauMonde;
   }
 }

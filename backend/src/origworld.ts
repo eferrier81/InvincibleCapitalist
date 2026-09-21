@@ -8,7 +8,7 @@ export const origworld = {
   totalangels: 0,
   activeangels: 0,
   angelbonus: 2,
-  lastupdate: 0,
+  lastupdate: '',
   products: [
     {
       id: 1,

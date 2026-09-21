@@ -11,7 +11,7 @@ export type PalierFieldsFragment = { name: string, logo: string, seuil: number, 
 
 export type ProductFieldsFragment = { id: number, name: string, logo: string, cout: number, croissance: number, revenu: number, vitesse: number, quantite: number, timeleft: number, managerUnlocked: boolean, paliers: Array<PalierFieldsFragment> };
 
-export type WorldFieldsFragment = { name: string, logo: string, money: number, score: number, totalangels: number, activeangels: number, angelbonus: number, lastupdate: number, products: Array<ProductFieldsFragment>, allunlocks: Array<PalierFieldsFragment>, upgrades: Array<PalierFieldsFragment>, angelupgrades: Array<PalierFieldsFragment>, managers: Array<PalierFieldsFragment> };
+export type WorldFieldsFragment = { name: string, logo: string, money: number, score: number, totalangels: number, activeangels: number, angelbonus: number, lastupdate: string, products: Array<ProductFieldsFragment>, allunlocks: Array<PalierFieldsFragment>, upgrades: Array<PalierFieldsFragment>, angelupgrades: Array<PalierFieldsFragment>, managers: Array<PalierFieldsFragment> };
 
 export type GetWorldQueryVariables = Exact<{
   user: string;

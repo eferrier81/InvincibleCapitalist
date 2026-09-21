@@ -104,7 +104,7 @@ export type World = {
   allunlocks: Array<Palier>;
   angelbonus: Scalars['Int']['output'];
   angelupgrades: Array<Palier>;
-  lastupdate: Scalars['Int']['output'];
+  lastupdate: Scalars['String']['output'];
   logo: Scalars['String']['output'];
   managers: Array<Palier>;
   money: Scalars['Float']['output'];
