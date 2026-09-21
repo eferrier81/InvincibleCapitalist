@@ -27,3 +27,6 @@
 !.vscode/tasks.json
 !.vscode/launch.json
 !.vscode/extensions.json
+
+# Mondes des joueurs (données runtime, pas du code source)
+/userworlds/

@@ -5,6 +5,7 @@ import { AppService } from './app.service.js';
 import { GraphQLModule } from '@nestjs/graphql';
 import { ApolloDriver, ApolloDriverConfig } from '@nestjs/apollo';
 import { join } from 'path';
+import { GraphQlResolver } from './resolver.js';
 
 export const { ObserveModule, ObserveInstrument } = createObserveModule();
 
@@ -18,8 +19,6 @@ export const { ObserveModule, ObserveInstrument } = createObserveModule();
         outputAs: 'class',
       },
     }),
-    // Distributed tracing, auto-correlated logs, request/job metrics, error
-    // telemetry, alarms, and more — out of the box. Sign up at https://observe.nestjs.com
     ObserveModule.forRoot({
       appKey: process.env.OBSERVE_APP_KEY ?? '',
       appSecret: process.env.OBSERVE_APP_SECRET ?? '',
@@ -28,6 +27,6 @@ export const { ObserveModule, ObserveInstrument } = createObserveModule();
     }),
   ],
   controllers: [AppController],
-  providers: [AppService],
+  providers: [AppService, GraphQlResolver],
 })
 export class AppModule {}
