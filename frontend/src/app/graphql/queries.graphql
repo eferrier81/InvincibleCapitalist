@@ -1,0 +1,93 @@
+fragment PalierFields on Palier {
+  name
+  logo
+  seuil
+  idcible
+  ratio
+  typeratio
+  unlocked
+}
+
+fragment ProductFields on Product {
+  id
+  name
+  logo
+  cout
+  croissance
+  revenu
+  vitesse
+  quantite
+  timeleft
+  managerUnlocked
+  paliers {
+    ...PalierFields
+  }
+}
+
+fragment WorldFields on World {
+  name
+  logo
+  money
+  score
+  totalangels
+  activeangels
+  angelbonus
+  lastupdate
+  products {
+    ...ProductFields
+  }
+  allunlocks {
+    ...PalierFields
+  }
+  upgrades {
+    ...PalierFields
+  }
+  angelupgrades {
+    ...PalierFields
+  }
+  managers {
+    ...PalierFields
+  }
+}
+
+query GetWorld($user: String!) {
+  getWorld(user: $user) {
+    ...WorldFields
+  }
+}
+
+mutation AcheterQtProduit($user: String!, $id: Int!, $quantite: Int!) {
+  acheterQtProduit(user: $user, id: $id, quantite: $quantite) {
+    ...ProductFields
+  }
+}
+
+mutation LancerProductionProduit($user: String!, $id: Int!) {
+  lancerProductionProduit(user: $user, id: $id) {
+    ...ProductFields
+  }
+}
+
+mutation EngagerManager($user: String!, $name: String!) {
+  engagerManager(user: $user, name: $name) {
+    ...PalierFields
+  }
+}
+
+mutation AcheterCashUpgrade($user: String!, $name: String!) {
+  acheterCashUpgrade(user: $user, name: $name) {
+    ...PalierFields
+  }
+}
+
+mutation AcheterAngelUpgrade($user: String!, $name: String!) {
+  acheterAngelUpgrade(user: $user, name: $name) {
+    ...PalierFields
+  }
+}
+
+mutation ResetWorld($user: String!) {
+  resetWorld(user: $user) {
+    ...WorldFields
+  }
+}

@@ -1,0 +1,27 @@
+<mat-toolbar color="primary">
+  <span>{{ title() }}</span>
+</mat-toolbar>
+
+<main class="page">
+  @if (worldQuery.loading()) {
+    <mat-spinner diameter="40" />
+  }
+
+  @if (worldQuery.error(); as error) {
+    <mat-card appearance="outlined" class="status-card status-error">
+      <mat-card-content>Erreur de connexion au backend : {{ error.message }}</mat-card-content>
+    </mat-card>
+  }
+
+  @if (worldQuery.data()?.getWorld; as world) {
+    <mat-card appearance="outlined" class="status-card">
+      <mat-card-header>
+        <mat-card-title>{{ world.name }}</mat-card-title>
+      </mat-card-header>
+      <mat-card-content>
+        <p>Argent : {{ world.money }}</p>
+        <p>Produits chargés : {{ world.products.length }}</p>
+      </mat-card-content>
+    </mat-card>
+  }
+</main>
