@@ -1,4 +1,4 @@
-import { Component, OnDestroy, OnInit, computed, effect, inject, input, signal } from '@angular/core';
+import { Component, OnDestroy, OnInit, computed, effect, inject, input, signal, untracked } from '@angular/core';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { GameService } from '../game';
 import { BigvaluePipe } from '../bigvalue-pipe';
@@ -38,6 +38,20 @@ export class Produit implements OnInit, OnDestroy {
   private destroyed = false;
 
   constructor() {
+    // À chaque (re)chargement du monde depuis le serveur (chargement initial,
+    // refresh, changement de pseudo, reset), on repart du timeleft du serveur.
+    // Sans ça, un cycle local en cours survivrait au rechargement et produirait
+    // un gain « fantôme » que le serveur ne connaît pas (constaté après un reset).
+    effect(() => {
+      const data = this.gameService.worldQuery.data();
+      untracked(() => {
+        const id = this.prod()?.id;
+        const serverProd = data?.getWorld?.products.find((p) => p.id === id);
+        this.timeleft.set(serverProd?.timeleft ?? 0);
+        this.lastTickTime = performance.now();
+      });
+    });
+
     // Toast d'erreur si une mutation d'achat/production échoue côté serveur.
     effect(() => {
       if (this.gameService.acheterProduitsMutation.error()) {

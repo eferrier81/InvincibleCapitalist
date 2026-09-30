@@ -9,7 +9,8 @@
 
 .header {
   display: grid;
-  grid-template-columns: 25% 25% 15% 35%;
+  /* fr plutôt que % : les fractions se partagent l'espace restant après les gaps, sinon débordement horizontal */
+  grid-template-columns: 5fr 5fr 3fr 7fr;
   align-items: center;
   gap: 0.5rem;
   padding: 0.6rem 1rem;

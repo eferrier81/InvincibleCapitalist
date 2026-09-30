@@ -140,6 +140,13 @@ export class GameService {
   // -----------------------------------------------------------------------
 
   /** Appelé par `produit` à chaque fois qu'un cycle de production s'est terminé. */
+  /** Gain d'un cycle de production, bonus des émissaires inclus (même formule que le backend). */
+  revenuCycle(prod: ProductFieldsFragment): number {
+    const world = this.world();
+    const bonus = world ? 1 + (world.activeangels * world.angelbonus) / 100 : 1;
+    return prod.revenu * prod.quantite * bonus;
+  }
+
   productionDone(prod: ProductFieldsFragment, qt: number): void {
     if (qt <= 0) return;
     this.world.update((world) => {
