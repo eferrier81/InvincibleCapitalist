@@ -110,4 +110,36 @@ describe('AppService game rules', () => {
     expect(managed.timeleft).toBe(1000);
     vi.restoreAllMocks();
   });
+
+  it.each(['', 'not-a-date'])('ignores an empty or invalid last update (%s)', (lastupdate) => {
+    const service = new AppService();
+    const now = 1_700_000_000_000;
+    vi.spyOn(Date, 'now').mockReturnValue(now);
+    const world = makeWorld();
+    world.lastupdate = lastupdate;
+    world.products[0].quantite = 2;
+    world.products[0].timeleft = 1000;
+
+    (service as unknown as { updateWorld(world: World): void }).updateWorld(world);
+
+    expect(world.money).toBe(0);
+    expect(world.products[0].timeleft).toBe(1000);
+    vi.restoreAllMocks();
+  });
+
+  it('ignores a last update in the future when the system clock moves backwards', () => {
+    const service = new AppService();
+    const now = 1_700_000_000_000;
+    vi.spyOn(Date, 'now').mockReturnValue(now);
+    const world = makeWorld();
+    world.lastupdate = new Date(now + 1000).toISOString();
+    world.products[0].quantite = 2;
+    world.products[0].timeleft = 1000;
+
+    (service as unknown as { updateWorld(world: World): void }).updateWorld(world);
+
+    expect(world.money).toBe(0);
+    expect(world.products[0].timeleft).toBe(1000);
+    vi.restoreAllMocks();
+  });
 });

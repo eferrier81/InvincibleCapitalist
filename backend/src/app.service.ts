@@ -71,7 +71,8 @@ export class AppService {
    */
   private updateWorld(world: World): void {
     const now = Date.now();
-    const elapsed = world.lastupdate ? now - new Date(world.lastupdate).getTime() : 0;
+    const lastUpdate = world.lastupdate ? new Date(world.lastupdate).getTime() : Number.NaN;
+    const elapsed = Number.isFinite(lastUpdate) && lastUpdate <= now ? now - lastUpdate : 0;
 
     if (elapsed > 0) {
       for (const product of world.products) {

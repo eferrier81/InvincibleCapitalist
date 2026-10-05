@@ -20,6 +20,25 @@ interface UserLogin {
   name: string;
 }
 
+export function mutationErrorMessage(error: unknown, fallback: string): string {
+  if (typeof error === 'object' && error !== null && 'graphQLErrors' in error) {
+    const graphQLErrors = (error as { graphQLErrors?: unknown }).graphQLErrors;
+    if (Array.isArray(graphQLErrors)) {
+      const message = graphQLErrors.find(
+        (item): item is { message: string } =>
+          typeof item === 'object' && item !== null && 'message' in item && typeof item.message === 'string',
+      )?.message;
+      if (message) return message;
+    }
+  }
+  if (error instanceof Error && error.message) return error.message;
+  if (typeof error === 'object' && error !== null && 'message' in error) {
+    const message = (error as { message?: unknown }).message;
+    if (typeof message === 'string' && message) return message;
+  }
+  return fallback;
+}
+
 function initialUsername(): string {
   const stored = localStorage.getItem('username');
   if (stored && stored !== '') return stored;
@@ -149,8 +168,11 @@ export class GameService {
   async lancerProductionGraphQL(id: number): Promise<void> {
     try {
       await this.lancerProductionMutation.mutate({ variables: { user: this.user(), id } });
-    } catch {
-      this.snackmessage.set('Erreur de transmission serveur pour le lancement de production');
+    } catch (error: unknown) {
+      this.snackmessage.set(
+        mutationErrorMessage(error, 'Erreur de transmission serveur pour le lancement de production'),
+      );
+      this.refreshWorld();
     }
   }
 
@@ -191,8 +213,8 @@ export class GameService {
   private async acheterProduitsGraphQL(id: number, qt: number): Promise<void> {
     try {
       await this.acheterProduitsMutation.mutate({ variables: { user: this.user(), id, quantite: qt } });
-    } catch {
-      this.snackmessage.set("Erreur de transmission serveur pour l'achat du produit");
+    } catch (error: unknown) {
+      this.refreshWorld();
     }
   }
 
@@ -226,8 +248,9 @@ export class GameService {
   private async engagerManagerGraphQL(name: string): Promise<void> {
     try {
       await this.engagerManagerMutation.mutate({ variables: { user: this.user(), name } });
-    } catch {
-      this.snackmessage.set("Erreur de transmission serveur pour l'engagement du manager");
+    } catch (error: unknown) {
+      this.snackmessage.set(mutationErrorMessage(error, "Erreur de transmission serveur pour l'engagement du manager"));
+      this.refreshWorld();
     }
   }
 
@@ -255,8 +278,9 @@ export class GameService {
   private async acheterCashUpgradeGraphQL(name: string): Promise<void> {
     try {
       await this.acheterCashUpgradeMutation.mutate({ variables: { user: this.user(), name } });
-    } catch {
-      this.snackmessage.set("Erreur de transmission serveur pour l'achat de l'amélioration");
+    } catch (error: unknown) {
+      this.snackmessage.set(mutationErrorMessage(error, "Erreur de transmission serveur pour l'achat de l'amélioration"));
+      this.refreshWorld();
     }
   }
 
@@ -284,8 +308,9 @@ export class GameService {
   private async acheterAngelUpgradeGraphQL(name: string): Promise<void> {
     try {
       await this.acheterAngelUpgradeMutation.mutate({ variables: { user: this.user(), name } });
-    } catch {
-      this.snackmessage.set("Erreur de transmission serveur pour l'achat du bonus céleste");
+    } catch (error: unknown) {
+      this.snackmessage.set(mutationErrorMessage(error, "Erreur de transmission serveur pour l'achat du bonus céleste"));
+      this.refreshWorld();
     }
   }
 
@@ -293,8 +318,9 @@ export class GameService {
     try {
       await this.resetWorldMutation.mutate({ variables: { user: this.user() } });
       this.snackmessage.set('Nouvelle partie lancée, vos émissaires sont à vos côtés !');
-    } catch {
-      this.snackmessage.set('Erreur de transmission serveur pour la remise à zéro');
+    } catch (error: unknown) {
+      this.snackmessage.set(mutationErrorMessage(error, 'Erreur de transmission serveur pour la remise à zéro'));
+      this.refreshWorld();
     } finally {
       this.refreshWorld();
     }

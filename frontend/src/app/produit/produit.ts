@@ -1,6 +1,6 @@
 import { Component, OnDestroy, OnInit, computed, effect, inject, input, signal, untracked } from '@angular/core';
 import { MatSnackBar } from '@angular/material/snack-bar';
-import { GameService } from '../game';
+import { GameService, mutationErrorMessage } from '../game';
 import { BigvaluePipe } from '../bigvalue-pipe';
 import { SecondPipe } from '../second-pipe';
 import { ProductFieldsFragment } from '../graphql';
@@ -54,8 +54,14 @@ export class Produit implements OnInit, OnDestroy {
 
     // Toast d'erreur si une mutation d'achat/production échoue côté serveur.
     effect(() => {
-      if (this.gameService.acheterProduitsMutation.error()) {
-        this.snackBar.open("Erreur de transmission serveur pour l'achat du produit", 'ok', { duration: 2000 });
+      const error = this.gameService.acheterProduitsMutation.error();
+      if (error) {
+        this.snackBar.open(
+          mutationErrorMessage(error, "Erreur de transmission serveur pour l'achat du produit"),
+          'ok',
+          { duration: 2000 },
+        );
+        void this.gameService.refreshWorld();
       }
     });
   }
