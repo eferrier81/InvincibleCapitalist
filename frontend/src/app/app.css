@@ -115,9 +115,17 @@
 /* Fenêtres modales (managers, unlocks, upgrades, angel upgrades...)   */
 /* ------------------------------------------------------------------ */
 
-.modal {
+.modal-backdrop {
   position: fixed;
   z-index: 10;
+  inset: 0;
+  overflow: auto;
+  background: rgba(0, 0, 0, 0.45);
+}
+
+.modal {
+  position: fixed;
+  z-index: 11;
   top: 8%;
   left: 50%;
   transform: translateX(-50%);

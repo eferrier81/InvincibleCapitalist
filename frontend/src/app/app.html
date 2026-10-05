@@ -57,12 +57,12 @@
       class="actionb"
       [matBadge]="gameService.badgeManagers()"
       [matBadgeHidden]="gameService.badgeManagers() === 0"
-      (click)="showManagers.update((v) => !v)"
+      (click)="toggleModal('managers')"
     >
       Managers
     </button>
 
-    <button type="button" mat-raised-button color="primary" class="actionb" (click)="showUnlocks.update((v) => !v)">
+    <button type="button" mat-raised-button color="primary" class="actionb" (click)="toggleModal('unlocks')">
       Unlocks
     </button>
 
@@ -73,12 +73,12 @@
       class="actionb"
       [matBadge]="gameService.badgeUpgrades()"
       [matBadgeHidden]="gameService.badgeUpgrades() === 0"
-      (click)="showUpgrades.update((v) => !v)"
+      (click)="toggleModal('upgrades')"
     >
       Cash Upgrades
     </button>
 
-    <button type="button" mat-raised-button color="accent" class="actionb" (click)="showAngels.update((v) => !v)">
+    <button type="button" mat-raised-button color="accent" class="actionb" (click)="toggleModal('angels')">
       Investors
     </button>
 
@@ -89,7 +89,7 @@
       class="actionb"
       [matBadge]="gameService.badgeAngelUpgrades()"
       [matBadgeHidden]="gameService.badgeAngelUpgrades() === 0"
-      (click)="showAngelUpgrades.update((v) => !v)"
+      (click)="toggleModal('angelUpgrades')"
     >
       Angel Upgrades
     </button>
@@ -102,9 +102,10 @@
   </div>
 </div>
 
-@if (showManagers()) {
-  <div class="modal">
-    <h2>Managers</h2>
+@if (openModal() === 'managers') {
+  <div class="modal-backdrop" (click)="closeModal()">
+    <div class="modal" role="dialog" aria-modal="true" aria-labelledby="managers-title" (click)="$event.stopPropagation()">
+    <h2 id="managers-title">Managers</h2>
     <div class="modal-list">
       @for (manager of world()?.managers; track manager.name) {
         @if (!manager.unlocked) {
@@ -128,15 +129,17 @@
         }
       }
     </div>
-    <button type="button" mat-raised-button color="primary" class="closebutton" (click)="showManagers.set(false)">
+    <button type="button" mat-raised-button color="primary" class="closebutton" (click)="closeModal()">
       Fermer
     </button>
+    </div>
   </div>
 }
 
-@if (showUnlocks()) {
-  <div class="modal">
-    <h2>Prochains paliers</h2>
+@if (openModal() === 'unlocks') {
+  <div class="modal-backdrop" (click)="closeModal()">
+    <div class="modal" role="dialog" aria-modal="true" aria-labelledby="unlocks-title" (click)="$event.stopPropagation()">
+    <h2 id="unlocks-title">Prochains paliers</h2>
     <div class="modal-list">
       @for (item of nextProductUnlocks(); track item.productName + item.palier.name) {
         <div class="listitem">
@@ -165,15 +168,17 @@
         }
       }
     </div>
-    <button type="button" mat-raised-button color="primary" class="closebutton" (click)="showUnlocks.set(false)">
+    <button type="button" mat-raised-button color="primary" class="closebutton" (click)="closeModal()">
       Fermer
     </button>
+    </div>
   </div>
 }
 
-@if (showUpgrades()) {
-  <div class="modal">
-    <h2>Cash Upgrades</h2>
+@if (openModal() === 'upgrades') {
+  <div class="modal-backdrop" (click)="closeModal()">
+    <div class="modal" role="dialog" aria-modal="true" aria-labelledby="upgrades-title" (click)="$event.stopPropagation()">
+    <h2 id="upgrades-title">Cash Upgrades</h2>
     <div class="modal-list">
       @for (upgrade of world()?.upgrades; track upgrade.name) {
         @if (!upgrade.unlocked) {
@@ -197,15 +202,17 @@
         }
       }
     </div>
-    <button type="button" mat-raised-button color="primary" class="closebutton" (click)="showUpgrades.set(false)">
+    <button type="button" mat-raised-button color="primary" class="closebutton" (click)="closeModal()">
       Fermer
     </button>
+    </div>
   </div>
 }
 
-@if (showAngels()) {
-  <div class="modal">
-    <h2>Investisseurs</h2>
+@if (openModal() === 'angels') {
+  <div class="modal-backdrop" (click)="closeModal()">
+    <div class="modal" role="dialog" aria-modal="true" aria-labelledby="angels-title" (click)="$event.stopPropagation()">
+    <h2 id="angels-title">Investisseurs</h2>
     <p>Émissaires actifs : <strong>{{ world()?.activeangels ?? 0 }}</strong></p>
     <p>Bonus de production actuel : {{ world()?.angelbonus ?? 0 }}% par émissaire</p>
     <p>Émissaires supplémentaires si reset maintenant : <strong>{{ gameService.angesGagnes() }}</strong></p>
@@ -219,15 +226,17 @@
     >
       Remettre la partie à zéro et récupérer les émissaires
     </button>
-    <button type="button" mat-raised-button color="primary" class="closebutton" (click)="showAngels.set(false)">
+    <button type="button" mat-raised-button color="primary" class="closebutton" (click)="closeModal()">
       Fermer
     </button>
+    </div>
   </div>
 }
 
-@if (showAngelUpgrades()) {
-  <div class="modal">
-    <h2>Angel Upgrades</h2>
+@if (openModal() === 'angelUpgrades') {
+  <div class="modal-backdrop" (click)="closeModal()">
+    <div class="modal" role="dialog" aria-modal="true" aria-labelledby="angel-upgrades-title" (click)="$event.stopPropagation()">
+    <h2 id="angel-upgrades-title">Angel Upgrades</h2>
     <div class="modal-list">
       @for (upgrade of world()?.angelupgrades; track upgrade.name) {
         @if (!upgrade.unlocked) {
@@ -256,9 +265,10 @@
       mat-raised-button
       color="primary"
       class="closebutton"
-      (click)="showAngelUpgrades.set(false)"
+      (click)="closeModal()"
     >
       Fermer
     </button>
+    </div>
   </div>
 }

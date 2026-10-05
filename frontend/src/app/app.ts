@@ -1,4 +1,4 @@
-import { Component, computed, effect, inject, signal } from '@angular/core';
+import { Component, HostListener, computed, effect, inject, signal } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatBadgeModule } from '@angular/material/badge';
@@ -9,6 +9,8 @@ import { GameService } from './game';
 import { Produit, QtMulti } from './produit/produit';
 import { BigvaluePipe } from './bigvalue-pipe';
 import { PalierFieldsFragment } from './graphql';
+
+type Modal = 'managers' | 'unlocks' | 'upgrades' | 'angels' | 'angelUpgrades';
 
 @Component({
   imports: [
@@ -34,11 +36,7 @@ export class App {
 
   protected readonly qtmulti = signal<QtMulti>('x1');
 
-  protected readonly showManagers = signal(false);
-  protected readonly showUnlocks = signal(false);
-  protected readonly showUpgrades = signal(false);
-  protected readonly showAngelUpgrades = signal(false);
-  protected readonly showAngels = signal(false);
+  protected readonly openModal = signal<Modal | null>(null);
 
   constructor() {
     // Affiche un toast à chaque nouveau message du GameService (achat,
@@ -49,6 +47,15 @@ export class App {
         this.snackBar.open(message, 'ok', { duration: 2000 });
       }
     });
+  }
+
+  @HostListener('document:keydown.escape')
+  protected closeModal(): void {
+    this.openModal.set(null);
+  }
+
+  protected toggleModal(modal: Modal): void {
+    this.openModal.update((current) => (current === modal ? null : modal));
   }
 
   /** Cycle x1 -> x10 -> x100 -> Max -> x1. */
@@ -87,6 +94,6 @@ export class App {
 
   protected resetWorld(): void {
     void this.gameService.resetWorldGraphQL();
-    this.showAngels.set(false);
+    this.closeModal();
   }
 }
