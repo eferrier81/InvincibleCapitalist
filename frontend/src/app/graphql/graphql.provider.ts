@@ -1,13 +1,14 @@
 import { EnvironmentProviders, inject, makeEnvironmentProviders } from '@angular/core';
 import { InMemoryCache, provideApollo, withApolloOptions } from '@apollo-orbit/angular';
 import { HttpLinkFactory, withHttpLink } from '@apollo-orbit/angular/http';
+import { SERVER_URL } from '../config';
 
 export function provideGraphQL(): EnvironmentProviders {
   return makeEnvironmentProviders([
     provideApollo(
       withApolloOptions(() => {
         const httpLinkFactory = inject(HttpLinkFactory);
-        const httpLink = httpLinkFactory.create({ uri: 'http://localhost:3000/graphql' });
+        const httpLink = httpLinkFactory.create({ uri: `${SERVER_URL}/graphql` });
         return {
           // Product n'est pas normalisé (keyFields: false) : sinon chaque réponse de
           // mutation renvoyant un Product (achat, lancement de production) serait

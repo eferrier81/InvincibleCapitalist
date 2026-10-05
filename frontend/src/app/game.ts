@@ -1,6 +1,7 @@
 import { Service, computed, inject, linkedSignal, signal } from '@angular/core';
 import { Apollo } from '@apollo-orbit/angular';
 import { form } from '@angular/forms/signals';
+import { SERVER_URL } from './config';
 import {
   ACHETER_ANGEL_UPGRADE_MUTATION,
   ACHETER_CASH_UPGRADE_MUTATION,
@@ -43,7 +44,7 @@ export class GameService {
   private readonly apollo = inject(Apollo);
 
   readonly user = signal(initialUsername());
-  readonly server = signal('http://localhost:3000');
+  readonly server = signal(SERVER_URL);
 
   /**
    * Construit l'URL absolue d'une image servie par le backend
