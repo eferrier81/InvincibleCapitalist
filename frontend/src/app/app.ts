@@ -92,6 +92,37 @@ export class App {
     return result;
   });
 
+  protected readonly nextGlobalUnlock = computed<PalierFieldsFragment | null>(() => {
+    const allUnlocks = this.world()?.allunlocks ?? [];
+    return [...allUnlocks].filter((palier) => !palier.unlocked).sort((a, b) => a.seuil - b.seuil)[0] ?? null;
+  });
+
+  protected readonly allUnlocksComplete = computed(() => {
+    return !!this.world() && this.nextProductUnlocks().length === 0 && !this.nextGlobalUnlock();
+  });
+
+  protected readonly availableCashUpgrades = computed(() => {
+    return [...(this.world()?.upgrades ?? [])]
+      .filter((upgrade) => !upgrade.unlocked)
+      .sort((a, b) => a.seuil - b.seuil)
+      .slice(0, 4);
+  });
+
+  protected readonly remainingCashUpgrades = computed(() => {
+    return Math.max(0, (this.world()?.upgrades ?? []).filter((upgrade) => !upgrade.unlocked).length - 4);
+  });
+
+  protected readonly availableAngelUpgrades = computed(() => {
+    return [...(this.world()?.angelupgrades ?? [])]
+      .filter((upgrade) => !upgrade.unlocked)
+      .sort((a, b) => a.seuil - b.seuil)
+      .slice(0, 4);
+  });
+
+  protected readonly remainingAngelUpgrades = computed(() => {
+    return Math.max(0, (this.world()?.angelupgrades ?? []).filter((upgrade) => !upgrade.unlocked).length - 4);
+  });
+
   protected resetWorld(): void {
     void this.gameService.resetWorldGraphQL();
     this.closeModal();
