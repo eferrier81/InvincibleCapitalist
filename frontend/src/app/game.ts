@@ -2,6 +2,7 @@ import { Service, computed, inject, linkedSignal, signal } from '@angular/core';
 import { Apollo } from '@apollo-orbit/angular';
 import { form } from '@angular/forms/signals';
 import { SERVER_URL } from './config';
+import { applyBonus, applyUnlocks, calculerAngesGagnes, coutAchat, maxAffordable } from './game-rules';
 import {
   ACHETER_ANGEL_UPGRADE_MUTATION,
   ACHETER_CASH_UPGRADE_MUTATION,
@@ -12,7 +13,6 @@ import {
   RESET_WORLD_MUTATION,
   PalierFieldsFragment,
   ProductFieldsFragment,
-  RatioType,
   WorldFieldsFragment,
 } from './graphql';
 
@@ -90,28 +90,16 @@ export class GameService {
   // -----------------------------------------------------------------------
 
   /** Coût total pour acheter `quantite` unités supplémentaires d'un produit. */
-  coutAchat(product: Pick<ProductFieldsFragment, 'cout' | 'croissance'>, quantite: number): number {
-    if (quantite <= 0) return 0;
-    if (product.croissance === 1) return product.cout * quantite;
-    return (product.cout * (Math.pow(product.croissance, quantite) - 1)) / (product.croissance - 1);
-  }
+  coutAchat = coutAchat;
 
   /** Quantité maximale achetable d'un produit avec la somme `money`. */
-  maxAffordable(product: Pick<ProductFieldsFragment, 'cout' | 'croissance'>, money: number): number {
-    if (money <= 0 || product.cout <= 0) return 0;
-    if (product.croissance === 1) return Math.floor(money / product.cout);
-    const n = Math.floor(
-      Math.log((money * (product.croissance - 1)) / product.cout + 1) / Math.log(product.croissance),
-    );
-    return Math.max(0, n);
-  }
+  maxAffordable = maxAffordable;
 
   /** Nombre d'émissaires supplémentaires gagnés si la partie était remise à zéro maintenant. */
   readonly angesGagnes = computed(() => {
     const world = this.world();
     if (!world) return 0;
-    const total = 150 * Math.sqrt(world.score / 1e15);
-    return Math.max(0, Math.floor(total - world.totalangels));
+    return calculerAngesGagnes(world);
   });
 
   // -----------------------------------------------------------------------
@@ -185,8 +173,18 @@ export class GameService {
     newProduct.cout = newProduct.cout * Math.pow(newProduct.croissance, qt);
     newWorld.money -= cost;
 
-    this.applyUnlocks(newWorld, newProduct);
-    this.world.set(newWorld);
+    const unlockedWorld = applyUnlocks(newWorld, newProduct);
+    for (const palier of unlockedWorld.products.find((p) => p.id === newProduct.id)?.paliers ?? []) {
+      if (palier.unlocked && !newProduct.paliers.find((p) => p.name === palier.name)?.unlocked) {
+        this.snackmessage.set(`Palier débloqué : ${palier.name}`);
+      }
+    }
+    for (const palier of unlockedWorld.allunlocks) {
+      if (palier.unlocked && !newWorld.allunlocks.find((p) => p.name === palier.name)?.unlocked) {
+        this.snackmessage.set(`Bonus mondial débloqué : ${palier.name}`);
+      }
+    }
+    this.world.set(unlockedWorld);
     void this.acheterProduitsGraphQL(product.id, qt);
   }
 
@@ -203,47 +201,6 @@ export class GameService {
   // -----------------------------------------------------------------------
 
   /** Débloque les paliers (spécifiques au produit puis globaux) qui viennent d'être atteints. */
-  private applyUnlocks(world: WorldFieldsFragment, product: ProductFieldsFragment): void {
-    for (const palier of product.paliers) {
-      if (!palier.unlocked && product.quantite >= palier.seuil) {
-        palier.unlocked = true;
-        this.applyBonus(world, palier);
-        this.snackmessage.set(`Palier débloqué : ${palier.name}`);
-      }
-    }
-
-    for (const palier of world.allunlocks) {
-      if (!palier.unlocked && world.products.every((p) => p.quantite >= palier.seuil)) {
-        palier.unlocked = true;
-        this.applyBonus(world, palier);
-        this.snackmessage.set(`Bonus mondial débloqué : ${palier.name}`);
-      }
-    }
-  }
-
-  /**
-   * Applique le bonus d'un palier/upgrade/angelupgrade :
-   * - "gain" : multiplie le revenu de la (ou des) cible(s)
-   * - "vitesse" : divise le temps de production de la (ou des) cible(s)
-   * - "ange" : renforce l'angelbonus du monde
-   * idcible = 0 signifie une cible globale (tous les produits).
-   */
-  private applyBonus(world: WorldFieldsFragment, palier: PalierFieldsFragment): void {
-    if (palier.typeratio === RatioType.Ange) {
-      world.angelbonus *= palier.ratio;
-      return;
-    }
-
-    const cibles = palier.idcible > 0 ? world.products.filter((p) => p.id === palier.idcible) : world.products;
-    for (const cible of cibles) {
-      if (palier.typeratio === RatioType.Gain) {
-        cible.revenu *= palier.ratio;
-      } else if (palier.typeratio === RatioType.Vitesse) {
-        cible.vitesse = Math.max(1, Math.round(cible.vitesse / palier.ratio));
-      }
-    }
-  }
-
   // -----------------------------------------------------------------------
   // Managers
   // -----------------------------------------------------------------------
@@ -288,9 +245,9 @@ export class GameService {
 
     newWorld.money -= upgrade.seuil;
     newUpgrade.unlocked = true;
-    this.applyBonus(newWorld, newUpgrade);
+    const upgradedWorld = applyBonus(newWorld, newUpgrade);
 
-    this.world.set(newWorld);
+    this.world.set(upgradedWorld);
     this.snackmessage.set(`Amélioration acquise : ${upgrade.name}`);
     void this.acheterCashUpgradeGraphQL(upgrade.name);
   }
@@ -317,9 +274,9 @@ export class GameService {
 
     newWorld.activeangels -= upgrade.seuil;
     newUpgrade.unlocked = true;
-    this.applyBonus(newWorld, newUpgrade);
+    const upgradedWorld = applyBonus(newWorld, newUpgrade);
 
-    this.world.set(newWorld);
+    this.world.set(upgradedWorld);
     this.snackmessage.set(`Bonus céleste débloqué : ${upgrade.name}`);
     void this.acheterAngelUpgradeGraphQL(upgrade.name);
   }
