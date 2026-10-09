@@ -33,7 +33,7 @@
     "@angular/compiler-cli": "^22.1.0",
     "@apollo-orbit/codegen": "^2.3.0",
     "@graphql-codegen/add": "^7.1.0",
-    "@graphql-codegen/cli": "^7.4.2",
+    "@graphql-codegen/cli": "^3.2.0",
     "@graphql-codegen/plugin-helpers": "^7.3.0",
     "@graphql-codegen/typescript": "^6.1.0",
     "@graphql-codegen/typescript-operations": "^6.1.7",
