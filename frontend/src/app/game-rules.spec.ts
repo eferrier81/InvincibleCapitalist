@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import { PalierFieldsFragment, ProductFieldsFragment, RatioType, WorldFieldsFragment } from './graphql';
-import { applyBonus, applyUnlocks, calculerAngesGagnes, coutAchat, maxAffordable } from './game-rules';
+import { applyBonus, applyUnlocks, calculerAngesGagnes, coutAchat, maxAffordable, nextToBuy } from './game-rules';
 
 const palier = (overrides: Partial<PalierFieldsFragment> = {}): PalierFieldsFragment => ({
   name: 'bonus',
@@ -54,6 +54,16 @@ describe('game rules', () => {
   it('calculates the maximum affordable quantity', () => {
     expect(maxAffordable({ cout: 10, croissance: 1.1 }, 500)).toBe(18);
     expect(maxAffordable({ cout: 10, croissance: 1 }, 35)).toBe(3);
+  });
+
+  it('calculates the quantity needed for the next product threshold', () => {
+    const current = product({
+      quantite: 7,
+      paliers: [palier({ seuil: 20 }), palier({ seuil: 10 }), palier({ seuil: 30 })],
+    });
+
+    expect(nextToBuy(current)).toBe(3);
+    expect(nextToBuy(product({ quantite: 30, paliers: [palier({ seuil: 20 }), palier({ seuil: 30 })] }))).toBeNull();
   });
 
   it('applies gain, rounded speed, global and angel bonuses without mutating the input', () => {

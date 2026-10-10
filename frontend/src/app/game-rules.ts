@@ -21,6 +21,13 @@ export function maxAffordable(
   return Math.max(0, n);
 }
 
+export function nextToBuy(product: Pick<ProductFieldsFragment, 'quantite' | 'paliers'>): number | null {
+  const nextPalier = product.paliers
+    .filter((palier) => !palier.unlocked && palier.seuil > product.quantite)
+    .sort((a, b) => a.seuil - b.seuil)[0];
+  return nextPalier ? nextPalier.seuil - product.quantite : null;
+}
+
 export function applyBonus(world: WorldFieldsFragment, palier: PalierFieldsFragment): WorldFieldsFragment {
   const nextWorld = structuredClone(world);
   if (palier.typeratio === RatioType.Ange) {

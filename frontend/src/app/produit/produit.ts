@@ -1,11 +1,12 @@
 import { Component, OnDestroy, OnInit, computed, effect, inject, input, signal, untracked } from '@angular/core';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { GameService, mutationErrorMessage } from '../game';
+import { nextToBuy } from '../game-rules';
 import { BigvaluePipe } from '../bigvalue-pipe';
 import { SecondPipe } from '../second-pipe';
 import { ProductFieldsFragment } from '../graphql';
 
-export type QtMulti = 'x1' | 'x10' | 'x100' | 'Max';
+export type QtMulti = 'x1' | 'x10' | 'x100' | 'Next' | 'Max';
 
 /**
  * Affichage et logique d'un produit : icône + quantité, barre de
@@ -92,6 +93,7 @@ export class Produit implements OnInit, OnDestroy {
 
   /** Quantité que l'on va effectivement essayer d'acheter selon le commutateur x1/x10/x100/Max. */
   protected readonly numberToBuy = computed(() => {
+    const prod = this.prod();
     switch (this.qtmulti()) {
       case 'x1':
         return 1;
@@ -99,6 +101,8 @@ export class Produit implements OnInit, OnDestroy {
         return 10;
       case 'x100':
         return 100;
+      case 'Next':
+        return prod ? nextToBuy(prod) ?? this.maxCanBuy() : 0;
       case 'Max':
         return this.maxCanBuy();
     }
