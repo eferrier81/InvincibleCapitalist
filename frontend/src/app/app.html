@@ -1,6 +1,6 @@
 @if (gameService.worldQuery.loading() && !world()) {
   <div class="loading-overlay">
-    <mat-spinner diameter="48" />
+    <div class="comic-loader" role="status" aria-label="Chargement"></div>
     <p>Connexion au monde…</p>
   </div>
 }
@@ -19,14 +19,14 @@
   <div class="header-world">
     @if (world(); as w) {
       <img class="round small" [src]="gameService.logoUrl(w.logo)" [alt]="w.name" />
-      <span class="world-name">{{ w.name }}</span>
+      <span class="world-name texte-titre">{{ w.name }}</span>
     }
   </div>
 
-  <div class="header-money" [innerHTML]="(world()?.money ?? 0 | bigvalue) + ' $'"></div>
+  <div class="header-money chiffre" [innerHTML]="(world()?.money ?? 0 | bigvalue) + ' $'"></div>
 
   <button type="button" class="qtmulti-button" (click)="cycleQtMulti()">
-    {{ qtmulti() }}
+    <span class="chiffre">{{ qtmulti() }}</span>
   </button>
 
   <div class="header-user">
@@ -104,8 +104,8 @@
 
 @if (openModal() === 'managers') {
   <div class="modal-backdrop" (click)="closeModal()">
-    <div class="modal" role="dialog" aria-modal="true" aria-labelledby="managers-title" (click)="$event.stopPropagation()">
-    <h2 id="managers-title">Managers</h2>
+    <div class="modal panneau" role="dialog" aria-modal="true" aria-labelledby="managers-title" (click)="$event.stopPropagation()">
+    <h2 id="managers-title" class="bandeau-titre">Managers</h2>
     <div class="modal-list">
       @for (manager of world()?.managers; track manager.name) {
         @if (!manager.unlocked) {
@@ -138,8 +138,8 @@
 
 @if (openModal() === 'unlocks') {
   <div class="modal-backdrop" (click)="closeModal()">
-    <div class="modal" role="dialog" aria-modal="true" aria-labelledby="unlocks-title" (click)="$event.stopPropagation()">
-    <h2 id="unlocks-title">Prochains paliers</h2>
+    <div class="modal panneau" role="dialog" aria-modal="true" aria-labelledby="unlocks-title" (click)="$event.stopPropagation()">
+    <h2 id="unlocks-title" class="bandeau-titre">Prochains paliers</h2>
     <div class="modal-list">
       @for (item of nextProductUnlocks(); track item.productName + item.palier.name) {
         <div class="listitem">
@@ -178,8 +178,8 @@
 
 @if (openModal() === 'upgrades') {
   <div class="modal-backdrop" (click)="closeModal()">
-    <div class="modal" role="dialog" aria-modal="true" aria-labelledby="upgrades-title" (click)="$event.stopPropagation()">
-    <h2 id="upgrades-title">Cash Upgrades</h2>
+    <div class="modal panneau" role="dialog" aria-modal="true" aria-labelledby="upgrades-title" (click)="$event.stopPropagation()">
+    <h2 id="upgrades-title" class="bandeau-titre">Cash Upgrades</h2>
     <div class="modal-list">
       @for (upgrade of availableCashUpgrades(); track upgrade.name) {
         <div class="listitem">
@@ -213,11 +213,12 @@
 
 @if (openModal() === 'angels') {
   <div class="modal-backdrop" (click)="closeModal()">
-    <div class="modal" role="dialog" aria-modal="true" aria-labelledby="angels-title" (click)="$event.stopPropagation()">
-    <h2 id="angels-title">Investisseurs</h2>
-    <p>Émissaires actifs : <strong>{{ world()?.activeangels ?? 0 }}</strong></p>
+    <div class="modal panneau" role="dialog" aria-modal="true" aria-labelledby="angels-title" (click)="$event.stopPropagation()">
+    <h2 id="angels-title" class="bandeau-titre">Investisseurs</h2>
+    <p>Émissaires actifs : <strong class="chiffre">{{ world()?.activeangels ?? 0 }}</strong></p>
     <p>Bonus de production actuel : {{ world()?.angelbonus ?? 0 }}% par émissaire</p>
-    <p>Émissaires supplémentaires si reset maintenant : <strong>{{ gameService.angesGagnes() }}</strong></p>
+    <p class="investor-gain">Émissaires supplémentaires si reset maintenant :</p>
+    <p class="titre-logo">{{ gameService.angesGagnes() }}</p>
     <button
       type="button"
       mat-raised-button
@@ -237,8 +238,8 @@
 
 @if (openModal() === 'angelUpgrades') {
   <div class="modal-backdrop" (click)="closeModal()">
-    <div class="modal" role="dialog" aria-modal="true" aria-labelledby="angel-upgrades-title" (click)="$event.stopPropagation()">
-    <h2 id="angel-upgrades-title">Angel Upgrades</h2>
+    <div class="modal panneau" role="dialog" aria-modal="true" aria-labelledby="angel-upgrades-title" (click)="$event.stopPropagation()">
+    <h2 id="angel-upgrades-title" class="bandeau-titre">Angel Upgrades</h2>
     <div class="modal-list">
       @for (upgrade of availableAngelUpgrades(); track upgrade.name) {
         <div class="listitem">

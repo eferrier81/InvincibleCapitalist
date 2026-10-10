@@ -3,7 +3,6 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatBadgeModule } from '@angular/material/badge';
 import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
-import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { FormField } from '@angular/forms/signals';
 import { GameService } from './game';
 import { Produit, QtMulti } from './produit/produit';
@@ -20,7 +19,6 @@ type Modal = 'managers' | 'unlocks' | 'upgrades' | 'angels' | 'angelUpgrades';
     MatIconModule,
     MatBadgeModule,
     MatSnackBarModule,
-    MatProgressSpinnerModule,
     FormField,
   ],
   selector: 'app-root',
@@ -44,7 +42,10 @@ export class App {
     effect(() => {
       const message = this.gameService.snackmessage();
       if (message) {
-        this.snackBar.open(message, 'ok', { duration: 2000 });
+        this.snackBar.open(message, 'ok', {
+          duration: 2000,
+          panelClass: ['comic-snackbar'],
+        });
       }
     });
   }

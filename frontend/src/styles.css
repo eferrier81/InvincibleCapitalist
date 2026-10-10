@@ -1,1 +1,86 @@
-/* You can add global styles to this file, and also import other style files */
+@import url('https://fonts.googleapis.com/css2?family=Anton&family=Barlow:ital,wght@0,400;0,500;0,600;0,700;1,400&family=Barlow+Condensed:wght@400;500;600;700&display=swap');
+
+:root {
+  --jaune: #f8f80a;
+  --encre: #0b0b0b;
+  --blanc: #ffffff;
+  --cyan: #12c7e6;
+  --bleu: #1181a8;
+  --bleu-nuit: #07152f;
+
+  --espace-1: 0.25rem;
+  --espace-2: 0.5rem;
+  --espace-3: 0.75rem;
+  --espace-4: 1rem;
+  --espace-5: 1.5rem;
+  --espace-6: 2rem;
+  --contour: 3px solid var(--encre);
+  --ombre-dure: 4px 4px 0 var(--encre);
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  min-height: 100%;
+}
+
+body {
+  margin: 0;
+  background: var(--cyan);
+  color: var(--encre);
+  font-family: 'Barlow', sans-serif;
+}
+
+button,
+input {
+  font: inherit;
+}
+
+.panneau {
+  border: var(--contour);
+  border-radius: 0;
+  background: var(--blanc);
+  box-shadow: var(--ombre-dure);
+}
+
+.texte-titre {
+  font-family: 'Anton', sans-serif;
+  letter-spacing: 0.03em;
+  text-transform: uppercase;
+}
+
+.chiffre {
+  font-family: 'Anton', sans-serif;
+  letter-spacing: 0.02em;
+}
+
+.comic-snackbar {
+  --mdc-snackbar-container-color: var(--blanc);
+  --mdc-snackbar-supporting-text-color: var(--encre);
+  border: var(--contour);
+  border-radius: 0;
+  box-shadow: var(--ombre-dure);
+  font-family: 'Barlow', sans-serif;
+  font-weight: 600;
+}
+
+.comic-snackbar .mat-mdc-snack-bar-action {
+  color: var(--bleu);
+  font-family: 'Barlow Condensed', sans-serif;
+  font-weight: 700;
+  text-transform: uppercase;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    scroll-behavior: auto !important;
+    transition-duration: 0.01ms !important;
+  }
+}

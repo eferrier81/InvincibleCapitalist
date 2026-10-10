@@ -1,11 +1,17 @@
 .produit {
   display: grid;
   grid-template-columns: 100px 1fr;
-  gap: 0.75rem;
+  gap: var(--espace-4);
   align-items: center;
-  padding: 0.6rem;
-  border-radius: 8px;
-  background: rgba(0, 0, 0, 0.03);
+  min-height: 150px;
+  padding: var(--espace-4);
+  background: var(--blanc);
+  transition: transform 120ms ease, box-shadow 120ms ease;
+}
+
+.produit:hover {
+  transform: translate(-2px, -2px);
+  box-shadow: 6px 6px 0 var(--encre);
 }
 
 .produit-image {
@@ -21,18 +27,38 @@
   border-radius: 50%;
   object-fit: cover;
   display: block;
+  border: var(--contour);
 }
 
 .quantite-badge {
   position: absolute;
-  bottom: -4px;
-  right: -4px;
-  background: #4caf50;
-  color: white;
-  border-radius: 999px;
-  padding: 2px 8px;
-  font-size: 0.75rem;
-  font-weight: bold;
+  right: -8px;
+  bottom: -8px;
+  min-width: 2.25rem;
+  padding: var(--espace-1) var(--espace-2);
+  border: 2px solid var(--encre);
+  background: var(--jaune);
+  box-shadow: 2px 2px 0 var(--encre);
+  color: var(--encre);
+  font-family: 'Anton', sans-serif;
+  font-size: 1rem;
+  text-align: center;
+}
+
+.manager-badge {
+  position: absolute;
+  top: -6px;
+  left: -6px;
+  display: grid;
+  width: 2rem;
+  height: 2rem;
+  place-items: center;
+  border: 2px solid var(--encre);
+  border-radius: 50%;
+  background: var(--cyan);
+  box-shadow: 2px 2px 0 var(--encre);
+  color: var(--encre);
+  font-size: 1.1rem;
 }
 
 .produit-info {
@@ -46,34 +72,43 @@
   display: flex;
   justify-content: space-between;
   align-items: baseline;
-  font-weight: 600;
   gap: 0.5rem;
+  min-width: 0;
 }
 
 .produit-name {
   overflow: hidden;
+  font-size: 1.15rem;
   text-overflow: ellipsis;
   white-space: nowrap;
 }
 
 .produit-revenu {
-  color: #4caf50;
-  font-size: 0.85rem;
+  color: var(--bleu);
+  font-size: 1.25rem;
   white-space: nowrap;
 }
 
 .progressbar {
   position: relative;
-  height: 24px;
+  height: 1.5rem;
   width: 100%;
-  background: #ddd;
-  border-radius: 4px;
+  border: 2px solid var(--encre);
+  border-radius: 0;
+  background: var(--blanc);
   overflow: hidden;
 }
 
 .fill {
   height: 100%;
-  background-color: #4caf50;
+  background-color: var(--jaune);
+  background-image: repeating-linear-gradient(
+    -45deg,
+    rgba(11, 11, 11, 0.18) 0,
+    rgba(11, 11, 11, 0.18) 6px,
+    transparent 6px,
+    transparent 12px
+  );
   width: 0%;
 }
 
@@ -83,22 +118,84 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 0.7rem;
-  color: #222;
+  color: var(--encre);
+  font-family: 'Barlow Condensed', sans-serif;
+  font-size: 0.85rem;
+  font-weight: 700;
 }
 
-.buy-button {
-  border: none;
-  border-radius: 4px;
-  padding: 0.4rem 0.6rem;
-  background: #3f51b5;
-  color: white;
+.bouton-comic {
+  border: var(--contour);
+  border-radius: 0;
+  padding: var(--espace-2) var(--espace-3);
+  background: var(--jaune);
+  box-shadow: 3px 3px 0 var(--encre);
+  color: var(--encre);
+  font-family: 'Barlow Condensed', sans-serif;
+  font-size: 1rem;
+  font-weight: 700;
+  letter-spacing: 0.03em;
+  text-transform: uppercase;
   cursor: pointer;
-  font-size: 0.8rem;
 }
 
-.buy-button.disabled,
-.buy-button:disabled {
-  background: #aaa;
+.bouton-comic:active:not(:disabled) {
+  transform: translate(2px, 2px);
+  box-shadow: 1px 1px 0 var(--encre);
+}
+
+.bouton-comic.disabled,
+.bouton-comic:disabled {
+  border-color: #555;
+  background: #b7b7b7;
+  box-shadow: 2px 2px 0 #555;
+  color: #555;
   cursor: not-allowed;
+}
+
+.verrouille {
+  background-color: rgba(255, 255, 255, 0.72);
+  background-image: repeating-linear-gradient(
+    -45deg,
+    transparent 0,
+    transparent 8px,
+    rgba(11, 11, 11, 0.06) 8px,
+    rgba(11, 11, 11, 0.06) 10px
+  );
+}
+
+.verrouille .round {
+  filter: grayscale(1);
+}
+
+@media (max-width: 520px) {
+  .produit {
+    grid-template-columns: 76px 1fr;
+    gap: var(--espace-3);
+    padding: var(--espace-3);
+  }
+
+  .produit-image,
+  .round {
+    width: 76px;
+    height: 76px;
+  }
+
+  .produit-header {
+    align-items: flex-start;
+    flex-direction: column;
+    gap: var(--espace-1);
+  }
+
+  .produit-name {
+    max-width: 100%;
+  }
+
+  .produit-revenu {
+    font-size: 1.1rem;
+  }
+
+  .buy-button {
+    width: 100%;
+  }
 }
