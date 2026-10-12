@@ -170,10 +170,15 @@ const current = simulate(structuredClone(origworld) as World);
 printResult('CHRONOLOGIE APRÈS AJUSTEMENT', current);
 
 console.log(`
-VALEURS APPLIQUÉES
-- Conserver le produit 1 (cout 4, croissance 1.07, revenu 1, vitesse 500).
-- Produit 2 : cout 50.
+VALEURS APPLIQUÉES (rééquilibrage du 12/10)
+- Croissance du coût : 1.07 pour tous les produits (avant : jusqu'à 1.16, les quantités plafonnaient).
+- Coûts de départ : 4, 60, 900, 13 500, 250 000 et 6 000 000 (x15 par palier de produit).
+- Revenus : temps de retour sur investissement de 2, 5, 10, 20, 40 et 80 s par unité.
+- Paliers « gain » des produits : x4 ; paliers globaux à 25 / 100 / 250 unités (x3, x3, x4).
 - Managers 2 à 6 : seuils 800, 8 000, 80 000, 800 000 et 8 000 000.
-- Produits 3 à 6 : coûts de départ 600, 6 000, 60 000 et 600 000.
-- Angel upgrades : seuils 10, 50, 250, 1 000 et 5 000.
+- Angel upgrades : seuils 1, 5, 25, 100 et 500 anges (un achat possible dès le premier reset).
+
+Ce script modélise un joueur passif (il n'achète qu'un exemplaire des produits 2 à 6
+et aucun cash upgrade). Pour un joueur qui réinvestit, voir scripts/simuler-joueur.py :
+premier ange vers 18 min pour un joueur optimal, environ 30 min pour un joueur réel.
 `);

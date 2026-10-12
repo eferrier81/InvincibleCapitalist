@@ -28,12 +28,16 @@ describe('AppService game rules', () => {
     const world = makeWorld();
     const target = world.products[0];
     const other = world.products[1];
+    // Valeurs de départ lues dans le monde : le test ne dépend pas de l'équilibrage.
+    const revenuCible = target.revenu;
+    const vitesseCible = target.vitesse;
+    const revenuAutre = other.revenu;
     service.applyBonus(world, makePalier({ idcible: target.id, typeratio: RatioType.gain, ratio: 3 }));
-    expect(target.revenu).toBe(3);
+    expect(target.revenu).toBe(revenuCible * 3);
     service.applyBonus(world, makePalier({ idcible: target.id, typeratio: RatioType.vitesse, ratio: 2 }));
-    expect(target.vitesse).toBe(250);
+    expect(target.vitesse).toBe(Math.round(vitesseCible / 2));
     service.applyBonus(world, makePalier({ idcible: 0, typeratio: RatioType.gain, ratio: 2 }));
-    expect(other.revenu).toBe(24);
+    expect(other.revenu).toBe(revenuAutre * 2);
     service.applyBonus(world, makePalier({ typeratio: RatioType.ange, ratio: 3 }));
     expect(world.angelbonus).toBe(6);
   });
