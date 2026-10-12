@@ -1,7 +1,7 @@
 import { Service, computed, inject, linkedSignal, signal } from '@angular/core';
 import { Apollo } from '@apollo-orbit/angular';
 import { form } from '@angular/forms/signals';
-import { SERVER_URL } from './config';
+import { enregistrerAdresseServeur, normaliserAdresseServeur, serverUrl } from './config';
 import { applyBonus, applyUnlocks, calculerAngesGagnes, coutAchat, maxAffordable } from './game-rules';
 import {
   ACHETER_ANGEL_UPGRADE_MUTATION,
@@ -63,7 +63,8 @@ export class GameService {
   private readonly apollo = inject(Apollo);
 
   readonly user = signal(initialUsername());
-  readonly server = signal(SERVER_URL);
+  /** Adresse du backend (voir config.ts), modifiable via changeServer(). */
+  readonly server = serverUrl.asReadonly();
 
   /**
    * Construit l'URL absolue d'une image servie par le backend
@@ -72,7 +73,10 @@ export class GameService {
    * donc l'ajouter explicitement entre `server()` et le chemin.
    */
   logoUrl(logo: string): string {
-    return `${this.server()}/${logo}`;
+    // Tolère les chemins renvoyés par le backend d'un autre groupe :
+    // URL déjà absolue, ou chemin commençant par « / ».
+    if (/^https?:\/\//i.test(logo)) return logo;
+    return `${this.server()}/${logo.replace(/^\/+/, '')}`;
   }
 
   readonly worldQuery = this.apollo.signal.query({
@@ -84,7 +88,9 @@ export class GameService {
   readonly world = linkedSignal(() => this.worldQuery.data()?.getWorld);
 
   /** Dernier message à afficher au joueur sous forme de toast. */
-  readonly snackmessage = signal('');
+  // equal: () => false : le même message deux fois de suite (ex : deux achats
+  // identiques) doit réafficher le toast.
+  readonly snackmessage = signal('', { equal: () => false });
 
   // -----------------------------------------------------------------------
   // Identité du joueur
@@ -94,10 +100,34 @@ export class GameService {
   readonly loginForm = form(this.userLoginModel);
 
   commitName(): void {
-    const field = this.loginForm.name().value();
+    const field = this.loginForm.name().value().trim();
     if (!field) return;
     localStorage.setItem('username', field);
     this.user.set(field);
+  }
+
+  /**
+   * Bouton Refresh : prend en compte le pseudo saisi même sans avoir appuyé
+   * sur Entrée. Un nouveau pseudo relance automatiquement la query GetWorld
+   * (ses variables dépendent de user()) ; sinon on recharge le monde actuel.
+   */
+  refresh(): void {
+    const saisi = this.loginForm.name().value().trim();
+    if (saisi && saisi !== this.user()) {
+      this.commitName();
+      return;
+    }
+    this.refreshWorld();
+  }
+
+  /** Champ « Serveur » : se brancher sur un autre backend (test d'interopérabilité). */
+  changeServer(saisie: string): void {
+    const adresse = normaliserAdresseServeur(saisie);
+    if (adresse !== this.server()) {
+      enregistrerAdresseServeur(adresse);
+      this.snackmessage.set(`Serveur : ${adresse}`);
+    }
+    this.refreshWorld();
   }
 
   refreshWorld(): void {
@@ -194,6 +224,7 @@ export class GameService {
     newProduct.quantite += qt;
     newProduct.cout = newProduct.cout * Math.pow(newProduct.croissance, qt);
     newWorld.money -= cost;
+    this.snackmessage.set(`Achat : ${qt} × ${product.name}`);
 
     const unlockedWorld = applyUnlocks(newWorld, newProduct);
     for (const palier of unlockedWorld.products.find((p) => p.id === newProduct.id)?.paliers ?? []) {

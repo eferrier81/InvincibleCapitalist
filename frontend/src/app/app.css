@@ -115,6 +115,59 @@
   color: var(--jaune);
 }
 
+/* Champ « Serveur » : adresse du backend (test d'interopérabilité). */
+.server-form {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: var(--espace-1) var(--espace-2);
+  margin-top: auto;
+  padding-top: var(--espace-4);
+  border-top: 2px dashed var(--cyan);
+}
+
+.server-label {
+  grid-column: 1 / -1;
+  color: var(--cyan);
+  font-family: 'Barlow Condensed', sans-serif;
+  font-size: 0.9rem;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+.server-input {
+  min-width: 0;
+  padding: var(--espace-2);
+  border: var(--contour);
+  border-radius: 0;
+  background: var(--blanc);
+  color: var(--encre);
+  font-family: 'Barlow', sans-serif;
+  font-size: 0.85rem;
+}
+
+.server-ok {
+  padding: 0 var(--espace-3);
+  border: var(--contour);
+  border-radius: 0;
+  background: var(--jaune);
+  color: var(--encre);
+  font-family: 'Anton', sans-serif;
+  box-shadow: 2px 2px 0 var(--encre);
+  cursor: pointer;
+}
+
+.server-ok:active {
+  box-shadow: none;
+  transform: translate(2px, 2px);
+}
+
+.server-input:focus-visible,
+.server-ok:focus-visible {
+  outline: 3px solid var(--jaune);
+  outline-offset: 2px;
+}
+
 .products {
   display: grid;
   grid-template-columns: 1fr 1fr;
@@ -166,6 +219,11 @@
     padding: var(--espace-3);
     border-right: 0;
     border-bottom: var(--contour);
+  }
+
+  .server-form {
+    grid-column: 1 / -1;
+    margin-top: 0;
   }
 
   .products {

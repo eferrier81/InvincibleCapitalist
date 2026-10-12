@@ -36,4 +36,9 @@ describe('GameService', () => {
   it('logoUrl inserts a slash between the server URL and the logo path', () => {
     expect(service.logoUrl('icones/atomeve.jpg')).toBe('http://localhost:3000/icones/atomeve.jpg');
   });
+
+  it("logoUrl accepte les chemins d'un autre backend (slash initial ou URL absolue)", () => {
+    expect(service.logoUrl('/icones/x.jpg')).toBe('http://localhost:3000/icones/x.jpg');
+    expect(service.logoUrl('https://autre-groupe.fr/icones/x.jpg')).toBe('https://autre-groupe.fr/icones/x.jpg');
+  });
 });

@@ -59,7 +59,7 @@ export class App {
     this.openModal.update((current) => (current === modal ? null : modal));
   }
 
-  /** Cycle x1 -> x10 -> x100 -> Next -> Max -> x1. */
+  /** Cycle x1 -> x10 -> x100 -> Max -> Next -> x1 (x1 à Max dans l'ordre attendu par la grille d'évaluation). */
   protected cycleQtMulti(): void {
     this.qtmulti.update((current) => {
       switch (current) {
@@ -68,10 +68,10 @@ export class App {
         case 'x10':
           return 'x100';
         case 'x100':
-          return 'Next';
-        case 'Next':
           return 'Max';
         case 'Max':
+          return 'Next';
+        case 'Next':
         default:
           return 'x1';
       }

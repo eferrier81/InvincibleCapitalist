@@ -9,7 +9,8 @@
   <div class="error-banner">
     <span>
       Impossible de contacter le serveur ({{ gameService.server() }}) : {{ error.message }}. Vérifiez que le
-      backend tourne bien (<code>npm run start:dev</code> dans <code>backend/</code>).
+      backend tourne bien (<code>npm run start:dev</code> dans <code>backend/</code>), ou changez l'adresse dans le
+      champ « Serveur » du menu.
     </span>
     <button type="button" mat-raised-button color="warn" (click)="gameService.refreshWorld()">Réessayer</button>
   </div>
@@ -41,7 +42,7 @@
       type="button"
       mat-icon-button
       aria-label="Rafraîchir"
-      (click)="gameService.refreshWorld()"
+      (click)="gameService.refresh()"
     >
       <mat-icon>refresh</mat-icon>
     </button>
@@ -93,6 +94,20 @@
     >
       Angel Upgrades
     </button>
+
+    <form class="server-form" (submit)="$event.preventDefault(); gameService.changeServer(serverInput.value); serverInput.value = gameService.server()">
+      <label for="server-input" class="server-label">Serveur</label>
+      <input
+        #serverInput
+        id="server-input"
+        type="text"
+        class="server-input"
+        spellcheck="false"
+        autocomplete="off"
+        [value]="gameService.server()"
+      />
+      <button type="submit" class="server-ok">OK</button>
+    </form>
   </nav>
 
   <div class="products">
@@ -215,6 +230,7 @@
   <div class="modal-backdrop" (click)="closeModal()">
     <div class="modal panneau" role="dialog" aria-modal="true" aria-labelledby="angels-title" (click)="$event.stopPropagation()">
     <h2 id="angels-title" class="bandeau-titre">Investisseurs</h2>
+    <p>Émissaires au total : <strong class="chiffre">{{ world()?.totalangels ?? 0 }}</strong></p>
     <p>Émissaires actifs : <strong class="chiffre">{{ world()?.activeangels ?? 0 }}</strong></p>
     <p>Bonus de production actuel : {{ world()?.angelbonus ?? 0 }}% par émissaire</p>
     <p class="investor-gain">Émissaires supplémentaires si reset maintenant :</p>
